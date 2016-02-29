@@ -21,7 +21,11 @@ function getUsers() {
 		$db = null;
 		echo json_encode($wines);
 	} catch(PDOException $e) {
-		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
+		echo json_encode(array(
+			'error' => array(
+				'text' => $e->getMessage(),
+			),
+		));
 	}
 }
 
@@ -39,7 +43,7 @@ function getUser($id) {
 }
 
 function addUser() {
-	$request = Slim::getInstance()->request();
+	$request = \Slim\Slim::getInstance()->request();
 	$user = json_decode($request->getBody());
 	$sql = "INSERT INTO users (username, first_name, last_name, address) VALUES (:username, :first_name, :last_name, :address)";
 	try {
@@ -59,7 +63,7 @@ function addUser() {
 }
 
 function updateUser($id) {
-	$request = Slim::getInstance()->request();
+	$request = \Slim\Slim::getInstance()->request();
 	$user = json_decode($request->getBody());
 	$sql = "UPDATE users SET username=:username, first_name=:first_name, last_name=:last_name, address=:address WHERE id=:id";
 	try {
@@ -83,18 +87,16 @@ function deleteUser($id) {
 	try {
 		$db = getConnection();
 		$stmt = $db->query($sql);  
-		$wines = $stmt->fetchAll(PDO::FETCH_OBJ);
-		$db = null;
-		echo json_encode($wines);
+		echo json_encode(array());
 	} catch(PDOException $e) {
 		echo '{"error":{"text":'. $e->getMessage() .'}}'; 
 	}
 }
 
 function getConnection() {
-	$dbhost="127.0.0.1";
-	$dbuser="root";
-	$dbpass="";
+	$dbhost="localhost";
+	$dbuser="angular_tutorial";
+	$dbpass="angular_tutorial";
 	$dbname="angular_tutorial";
 	$dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);	
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
